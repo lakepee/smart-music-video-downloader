@@ -41,7 +41,7 @@ Paste one or more links, pick Audio or Video, choose a quality, and click Downlo
 
 **Requirements:** Windows 10 or 11 (64-bit). No Python or FFmpeg installation needed.
 
-### 🍎 macOS
+### 🍎 macOS - Coming soon
 
 1. Download **`SmartMusicVideoDownloader.dmg`** from the [Releases page](../../releases/latest).
 2. Open the DMG.
