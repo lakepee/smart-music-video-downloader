@@ -743,6 +743,20 @@ def _resource_path(name):
         meipass = getattr(sys, "_MEIPASS", None)
         if meipass:
             candidates.append(os.path.join(meipass, name))
+    # Linux system icon paths (installed via .deb)
+    if IS_LINUX:
+        candidates.append(
+            os.path.join("/usr/share/icons/hicolor/256x256/apps",
+                         "smartmusicvideodownloader.png")
+        )
+        candidates.append(
+            os.path.join("/usr/share/icons/hicolor/256x256/apps",
+                         "smartmusicvideodownloader.ico")
+        )
+        candidates.append(
+            os.path.join("/usr/share/pixmaps",
+                         "smartmusicvideodownloader.png")
+        )
     for c in candidates:
         if os.path.exists(c):
             return c
