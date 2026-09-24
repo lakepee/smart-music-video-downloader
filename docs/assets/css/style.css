@@ -1,0 +1,335 @@
+/* Smart Music and Video Downloader — Brand stylesheet */
+
+:root {
+  --brand-50:  #e8f5ee;
+  --brand-100: #c8e6d4;
+  --brand-200: #96cfae;
+  --brand-300: #5fb084;
+  --brand-400: #369162;
+  --brand-500: #1e7a4a;
+  --brand-600: #15603a;
+  --brand-700: #0f472c;
+  --brand-800: #0a321f;
+  --brand-900: #061f13;
+
+  --surface:    #f8faf9;
+  --surface-alt:#eef4f0;
+  --text:       #1a2b22;
+  --text-muted: #5a6b62;
+
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", Monaco, "Courier New", monospace;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  --shadow-sm: 0 1px 2px rgba(15, 71, 44, 0.06);
+  --shadow-md: 0 4px 12px rgba(15, 71, 44, 0.08);
+  --shadow-lg: 0 12px 32px rgba(15, 71, 44, 0.12);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--surface);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--surface-alt); }
+::-webkit-scrollbar-thumb { background: var(--brand-200); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--brand-300); }
+
+/* ---- Typography ---- */
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+a {
+  color: var(--brand-500);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover { color: var(--brand-600); }
+
+code, kbd, .mono {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+code {
+  background: var(--brand-50);
+  color: var(--brand-700);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+
+/* ---- Layout ---- */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.section {
+  padding: 64px 0;
+}
+
+/* ---- Background grid pattern ---- */
+.bg-grid {
+  background-size: 40px 40px;
+  background-image:
+    linear-gradient(to right, rgba(30, 122, 74, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(30, 122, 74, 0.05) 1px, transparent 1px);
+  mask-image: radial-gradient(ellipse 80% 50% at 50% 0%, #000 70%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 50% at 50% 0%, #000 70%, transparent 100%);
+}
+
+/* ---- Glass nav ---- */
+.glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(30, 122, 74, 0.1);
+}
+
+/* ---- Brand gradient ---- */
+.brand-gradient {
+  background: linear-gradient(135deg, #1e7a4a 0%, #369162 100%);
+}
+
+/* ---- Glow accent ---- */
+.glow {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(54, 145, 98, 0.15) 0%, rgba(0,0,0,0) 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* ---- Buttons ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 15px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #1e7a4a 0%, #369162 100%);
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+  color: white;
+}
+
+.btn-secondary {
+  background: white;
+  color: var(--brand-700);
+  border: 1px solid var(--brand-200);
+}
+
+.btn-secondary:hover {
+  background: var(--brand-50);
+  border-color: var(--brand-300);
+  color: var(--brand-700);
+}
+
+/* ---- Cards ---- */
+.card {
+  background: white;
+  border: 1px solid var(--brand-100);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  border-color: var(--brand-300);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ---- Legal pages ---- */
+.legal-main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 120px 24px 80px;
+}
+
+.legal-header {
+  border-bottom: 1px solid var(--brand-100);
+  padding-bottom: 32px;
+  margin-bottom: 48px;
+}
+
+.legal-header h1 {
+  font-size: 36px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.legal-header p {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.legal-body h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-top: 40px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.legal-body h2 .num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--brand-50);
+  color: var(--brand-600);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.legal-body h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 24px;
+  margin-bottom: 8px;
+}
+
+.legal-body p {
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.legal-body ul {
+  margin: 12px 0 16px 20px;
+  color: var(--text-muted);
+}
+
+.legal-body li {
+  margin-bottom: 6px;
+}
+
+.legal-body .notice {
+  background: var(--brand-50);
+  border-left: 4px solid var(--brand-400);
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  margin: 20px 0;
+  color: var(--brand-800);
+  font-size: 14px;
+}
+
+.legal-body .license-block {
+  background: #0a321f;
+  color: #c8e6d4;
+  border-radius: var(--radius-md);
+  padding: 28px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+
+/* ---- Footer ---- */
+.footer {
+  border-top: 1px solid var(--brand-100);
+  background: white;
+  padding: 48px 0 24px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+.footer-col h4 {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+
+.footer-col ul {
+  list-style: none;
+}
+
+.footer-col li {
+  margin-bottom: 8px;
+}
+
+.footer-col a {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.footer-col a:hover { color: var(--brand-500); }
+
+.footer-bottom {
+  border-top: 1px solid var(--brand-100);
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-bottom p {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .legal-header h1 { font-size: 28px; }
+  .legal-main { padding: 100px 20px 60px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 480px) {
+  .footer-grid { grid-template-columns: 1fr; }
+}

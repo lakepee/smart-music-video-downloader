@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /private/
+
+Sitemap: https://lakepee.github.io/smart-music-video-downloader/sitemap.xml

@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Music and Video Downloader | Simple, Ad-Free Downloader</title>
+    <meta name="description" content="A simple, ad-free desktop app for downloading music and videos from YouTube and 1000+ sites. Paste a link, click Download. No setup required." />
+    <meta name="keywords" content="music downloader, video downloader, youtube downloader, mp3 downloader, mp4 downloader, ad-free downloader, yt-dlp gui" />
+
+    <link rel="canonical" href="https://lakepee.github.io/smart-music-video-downloader/" />
+
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon_io/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon_io/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon_io/favicon-16x16.png" />
+    <link rel="manifest" href="assets/favicon_io/site.webmanifest" />
+    <link rel="icon" href="assets/favicon_io/favicon.ico" type="image/x-icon" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"],
+                        mono: ["JetBrains Mono", "monospace"],
+                    },
+                    colors: {
+                        brand: {
+                            50: "#e8f5ee",
+                            100: "#c8e6d4",
+                            200: "#96cfae",
+                            300: "#5fb084",
+                            400: "#369162",
+                            500: "#1e7a4a",
+                            600: "#15603a",
+                            700: "#0f472c",
+                            800: "#0a321f",
+                            900: "#061f13",
+                        },
+                        surface: "#f8faf9",
+                        surfaceAlt: "#eef4f0",
+                    },
+                },
+            },
+        };
+    </script>
+
+    <style>
+        body { font-family: "Inter", sans-serif; background: #f8faf9; color: #1a2b22; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #eef4f0; }
+        ::-webkit-scrollbar-thumb { background: #b8d4c4; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #96cfae; }
+        .glass { background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(30,122,74,0.1); }
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image:
+                linear-gradient(to right, rgba(30,122,74,0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(30,122,74,0.05) 1px, transparent 1px);
+            mask-image: radial-gradient(ellipse 80% 50% at 50% 0%, #000 70%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse 80% 50% at 50% 0%, #000 70%, transparent 100%);
+        }
+        .glow { position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(54,145,98,0.15) 0%, rgba(0,0,0,0) 70%); border-radius: 50%; pointer-events: none; }
+        .brand-gradient { background: linear-gradient(135deg, #1e7a4a 0%, #369162 100%); }
+
+        /* App preview window styling */
+        .app-window {
+            background: #f0f0f0;
+            border: 1px solid #a0a0a0;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            font-size: 14px;
+            color: #000;
+        }
+        .app-window button {
+            background: #f0f0f0;
+            border: 1px solid #9a9a9a;
+            color: #000;
+            cursor: default;
+        }
+        .app-window textarea,
+        .app-window input {
+            background: #fff;
+            color: #000;
+        }
+    </style>
+</head>
+<body class="relative overflow-x-hidden">
+
+    <!-- Background -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <div class="bg-grid absolute inset-0 h-[80vh]"></div>
+        <div class="glow top-[-100px] left-1/2 -translate-x-1/2"></div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="fixed top-0 w-full z-50 glass">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="#home" class="flex items-center gap-2 group">
+                <img src="assets/icons/logo.svg" alt="Logo" class="w-9 h-9 object-contain" />
+                <span class="text-base font-bold tracking-tight text-brand-700">Smart Downloader</span>
+            </a>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#features" class="text-sm font-medium text-gray-600 hover:text-brand-600 transition-colors">Features</a>
+                <a href="#how-to" class="text-sm font-medium text-gray-600 hover:text-brand-600 transition-colors">Guide</a>
+                <a href="#download" class="text-sm font-medium text-gray-600 hover:text-brand-600 transition-colors">Download</a>
+                <a href="#tools" class="text-sm font-medium text-gray-600 hover:text-brand-600 transition-colors">More Tools</a>
+                <a href="#donate" class="text-sm font-medium text-brand-600 hover:text-brand-700 transition-colors flex items-center gap-1">
+                    <span class="iconify" data-icon="lucide:heart" data-width="14"></span> Support
+                </a>
+            </div>
+            <a href="https://sourceforge.net/projects/smart-music-video-downloader/files/latest/download"
+               class="hidden sm:flex items-center gap-2 brand-gradient text-white text-sm font-semibold px-4 py-2 rounded-lg hover:opacity-90 transition-opacity shadow-md">
+                Download <span class="opacity-70 text-xs">v1.0</span>
+            </a>
+        </div>
+    </nav>
+
+    <main class="relative z-10 pt-32 pb-20">
+
+        <!-- Hero -->
+        <section id="home" class="max-w-6xl mx-auto px-6 mb-32">
+            <div class="flex flex-col items-center text-center mb-16">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 border border-brand-200 text-brand-600 text-xs font-semibold mb-6">
+                    <span class="iconify" data-icon="lucide:sparkles" data-width="12"></span>
+                    <span>100% Free &middot; No Ads &middot; No Bloat</span>
+                </div>
+
+                <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight text-gray-900 mb-6">
+                    Download Music &amp; Videos<br />
+                    <span class="text-brand-500">The Simple Way</span>
+                </h1>
+
+                <p class="text-gray-600 text-lg md:text-xl max-w-2xl leading-relaxed mb-10">
+                    Paste a link, pick Audio or Video, click Download. Clean interface, no ads, no setup. Works with YouTube and 1000+ sites.
+                </p>
+
+                <div class="flex flex-col sm:flex-row items-center gap-4">
+                    <a href="https://sourceforge.net/projects/smart-music-video-downloader/files/latest/download"
+                       class="flex items-center gap-2 brand-gradient text-white font-semibold text-base px-8 py-4 rounded-xl hover:opacity-90 transition-all shadow-lg hover:shadow-xl">
+                        <span class="iconify" data-icon="lucide:download" data-width="18"></span>
+                        Download for Windows
+                    </a>
+                    <a href="#features"
+                       class="flex items-center gap-2 bg-white text-brand-700 border border-brand-200 font-semibold text-base px-8 py-4 rounded-xl hover:bg-brand-50 transition-colors shadow-sm">
+                        See Features
+                        <span class="iconify" data-icon="lucide:arrow-right" data-width="18"></span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- App Preview Card -->
+            <div class="w-full max-w-[1000px] mx-auto app-window rounded-md overflow-hidden shadow-2xl flex flex-col">
+
+                <!-- Window Title Bar -->
+                <div class="h-8 bg-white flex items-center justify-between px-3 select-none border-b border-gray-300">
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 bg-[#2e7d32] rounded-sm flex items-center justify-center">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 18V5l12-2v13"></path>
+                                <circle cx="6" cy="18" r="3"></circle>
+                                <circle cx="18" cy="16" r="3"></circle>
+                            </svg>
+                        </div>
+                        <span class="text-xs text-black">Smart Music and Video Downloader</span>
+                    </div>
+                    <div class="flex items-center gap-4 text-gray-600">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="1"></rect></svg>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg>
+                    </div>
+                </div>
+
+                <!-- Main App Content -->
+                <div class="p-4 flex flex-col gap-4 bg-[#f0f0f0]">
+
+                    <!-- Header Row -->
+                    <div class="flex justify-between items-center flex-wrap gap-3">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-8 h-8 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+                                <path d="M4 6l2 4"></path>
+                                <path d="M8 6l2 4"></path>
+                                <path d="M12 6l2 4"></path>
+                                <path d="M16 6l2 4"></path>
+                            </svg>
+                            <h2 class="text-2xl md:text-3xl font-bold text-black tracking-tight">Smart Music and Video Downloader</h2>
+                            <svg class="w-8 h-8 text-black hidden md:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 18V5l12-2v13"></path>
+                                <circle cx="6" cy="18" r="3"></circle>
+                                <circle cx="18" cy="16" r="3"></circle>
+                            </svg>
+                        </div>
+
+                        <button class="flex items-center gap-2 px-3 py-1.5 text-black rounded">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 1 0 2.6-6.4L21 8"></path></svg>
+                            Check for Updates
+                        </button>
+                    </div>
+
+                    <!-- Save To Row -->
+                    <div class="flex items-center gap-3 w-full flex-wrap">
+                        <span class="text-black whitespace-nowrap">Save to:</span>
+                        <input type="text" readonly value="C:\Users\petel\Downloads\musicdownloads" class="flex-1 min-w-[200px] bg-white border border-gray-300 px-2 py-1 outline-none text-black rounded-sm" />
+                        <button class="px-4 py-1.5 text-black whitespace-nowrap rounded">
+                            Change Folder
+                        </button>
+                    </div>
+
+                    <!-- Paste Links Section -->
+                    <div class="flex flex-col gap-1">
+                        <div class="flex justify-between items-center flex-wrap gap-2">
+                            <span class="text-black text-sm">Paste one or more links (one per line or space-separated):</span>
+                            <div class="flex gap-2">
+                                <button class="flex items-center gap-1.5 px-3 py-1 text-black rounded text-sm">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                    Paste
+                                </button>
+                                <button class="flex items-center gap-1.5 px-3 py-1 text-black rounded text-sm">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+                        <textarea class="w-full h-40 border border-gray-400 p-2 outline-none resize-none text-black font-mono text-xs bg-white whitespace-pre rounded-sm" spellcheck="false" readonly>https://music.youtube.com/watch?v=2ebDOTU5hQM&amp;si=UbNYJYnVM-V2qXqg
+https://music.youtube.com/watch?v=51swQf8ONW0&amp;si=IT1evrW3FGOACnef
+https://music.youtube.com/watch?v=_XIobndxe4I&amp;si=USq-C8bbs7ujCymn
+https://music.youtube.com/watch?v=8mBLpoa1MJA&amp;si=az4PizqfPq3MFVXo
+https://music.youtube.com/watch?v=adhjHxo9xTA&amp;si=e9aD3OXXIn1BCjlBD</textarea>
+                    </div>
+
+                    <!-- Download Options Row -->
+                    <div class="flex items-center gap-6 mt-1 flex-wrap">
+                        <span class="text-black">Download as:</span>
+
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="dlType" class="w-3.5 h-3.5">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-black"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+                            Audio (MP3)
+                        </label>
+
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="dlType" checked class="w-3.5 h-3.5">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-black"><rect x="2" y="6" width="20" height="12" rx="2"></rect><path d="M4 6l2 4"></path><path d="M8 6l2 4"></path><path d="M12 6l2 4"></path><path d="M16 6l2 4"></path></svg>
+                            Video (MP4)
+                        </label>
+
+                        <div class="flex items-center gap-2 ml-2">
+                            <span class="text-black">Quality:</span>
+                            <select class="bg-white border border-gray-400 px-1 py-0.5 outline-none text-black w-32 rounded-sm">
+                                <option>1080p</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar Section -->
+                    <div class="flex items-center gap-4 mt-2 flex-wrap">
+                        <div class="flex-1 min-w-[200px] bg-[#e0e0e0] border border-[#a0a0a0] h-3.5 relative rounded-sm overflow-hidden">
+                            <div class="h-full bg-[#4caf50]" style="width: 63.8%"></div>
+                        </div>
+                        <span class="text-black whitespace-nowrap text-xs">Downloaded: 0  Errors: 0  (1/243)</span>
+                    </div>
+
+                    <!-- Large Action Buttons -->
+                    <div class="flex justify-center gap-3 my-2 flex-wrap">
+                        <button class="bg-[#387d3c] border border-[#2a5c2d] w-44 py-3 flex items-center justify-center gap-2 shadow-sm text-white font-bold text-base uppercase rounded-sm cursor-default">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            Downloading...
+                        </button>
+
+                        <button class="bg-[#d32f2f] border border-[#9a1e1e] w-32 py-3 flex items-center justify-center gap-2 shadow-sm text-white font-bold text-base uppercase rounded-sm">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                            STOP
+                        </button>
+
+                        <button class="bg-[#1976d2] border border-[#115293] w-44 py-3 flex items-center justify-center gap-2 shadow-sm text-white font-bold text-base uppercase rounded-sm cursor-default opacity-60">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                            CONTINUE
+                        </button>
+                    </div>
+
+                    <!-- Progress Detail Text -->
+                    <div class="text-[#555] text-xs font-sans mb-1">
+                        [1/243] [download]  63.8% of ~ 21.11MiB at   3.30MiB/s ETA 00:03 (frag 23/38)
+                    </div>
+
+                    <!-- Log Output -->
+                    <textarea class="w-full h-28 border border-gray-400 p-2 outline-none resize-none text-black text-xs font-mono bg-white whitespace-pre overflow-x-auto rounded-sm" readonly>=== [1/243] https://music.youtube.com/watch?v=N7IxlspnaQw&amp;si=wXB4s1_xGYcRmZhf ===
+CMD: C:\Users\petel\Documents\ytmusicdownloader\Musicdownloader\dist\SmartMusicVideoDownloader\yt-dlp.exe -f bv*[height&lt;=1080]+ba/b[height&lt;=1080]
+--merge-output-format mp4 --embed-thumbnail --embed-metadata --ffmpeg-location
+C:\Users\petel\Documents\ytmusicdownloader\Musicdownloader\dist\SmartMusicVideoDownloader --newline --no-warnings -o
+C:\Users\petel\Downloads\musicdownloads\%(title)s.%(ext)s https://music.youtube.com/watch?v=N7IxlspnaQw&amp;si=wXB4s1_xGYcRmZhf
+[download] Destination: C:\Users\petel\Downloads\musicdownloads\What's My Name (Album Version).f616.mp4</textarea>
+
+                </div>
+            </div>
+
+            <!-- Trust badges -->
+            <div class="flex flex-wrap justify-center gap-6 mt-12">
+                <div class="flex items-center gap-2 text-sm text-gray-500 font-medium">
+                    <span class="iconify text-brand-500" data-icon="lucide:shield-check" data-width="18"></span> No Ads
+                </div>
+                <div class="flex items-center gap-2 text-sm text-gray-500 font-medium">
+                    <span class="iconify text-brand-500" data-icon="lucide:wifi-off" data-width="18"></span> 100% Offline
+                </div>
+                <div class="flex items-center gap-2 text-sm text-gray-500 font-medium">
+                    <span class="iconify text-brand-500" data-icon="lucide:zap" data-width="18"></span> Fast &amp; Lightweight
+                </div>
+                <div class="flex items-center gap-2 text-sm text-gray-500 font-medium">
+                    <span class="iconify text-brand-500" data-icon="lucide:hard-drive" data-width="18"></span> Everything Bundled
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section id="features" class="max-w-6xl mx-auto px-6 mb-32">
+            <div class="mb-12 text-center">
+                <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 mb-4">What Makes It Different</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Simple, honest, and free. Built for people who just want to download their music.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="group p-6 rounded-2xl bg-white border border-brand-100 hover:border-brand-300 hover:shadow-lg transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center mb-4 text-brand-500 group-hover:scale-110 transition-transform">
+                        <span class="iconify" data-icon="lucide:music" data-width="24"></span>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Audio Downloads</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">Download as MP3 with embedded cover art and metadata (title, artist, album).</p>
+                </div>
+
+                <div class="group p-6 rounded-2xl bg-white border border-brand-100 hover:border-brand-300 hover:shadow-lg transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center mb-4 text-brand-500 group-hover:scale-110 transition-transform">
+                        <span class="iconify" data-icon="lucide:video" data-width="24"></span>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Video Downloads</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">Best-quality MP4 up to 4K with merged audio, ready to play anywhere.</p>
+                </div>
+
+                <div class="group p-6 rounded-2xl bg-white border border-brand-100 hover:border-brand-300 hover:shadow-lg transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center mb-4 text-brand-500 group-hover:scale-110 transition-transform">
+                        <span class="iconify" data-icon="lucide:list" data-width="24"></span>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Multi-Link Support</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">Paste one link or a whole batch. Downloads them one by one automatically.</p>
+                </div>
+
+                <div class="group p-6 rounded-2xl bg-white border border-brand-100 hover:border-brand-300 hover:shadow-lg transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center mb-4 text-brand-500 group-hover:scale-110 transition-transform">
+                        <span class="iconify" data-icon="lucide:sliders" data-width="24"></span>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Quality Control</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">Choose Original, 1080p, 720p, 480p, or 360p for video. Or pick audio tiers.</p>
+                </div>
+
+                <div class="group p-6 rounded-2xl bg-white border border-brand-100 hover:border-brand-300 hover:shadow-lg transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center mb-4 text-brand-500 group-hover:scale-110 transition-transform">
+                        <span class="iconify" data-icon="lucide:pause-circle" data-width="24"></span>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Stop &amp; Resume</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">Pause downloads mid-way and continue later. No lost progress.</p>
+                </div>
+
+                <div class="group p-6 rounded-2xl bg-white border border-brand-100 hover:border-brand-300 hover:shadow-lg transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center mb-4 text-brand-500 group-hover:scale-110 transition-transform">
+                        <span class="iconify" data-icon="lucide:refresh-cw" data-width="24"></span>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Auto-Updates</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">The download engine updates itself. YouTube breaks it? One click and it works again.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- How To -->
+        <section id="how-to" class="max-w-6xl mx-auto px-6 mb-32">
+            <div class="bg-white border border-brand-100 rounded-3xl p-8 md:p-12">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-gray-900 mb-6">How It Works</h2>
+                        <div class="space-y-6">
+                            <div class="flex gap-4">
+                                <div class="flex-none w-10 h-10 rounded-full brand-gradient text-white flex items-center justify-center font-bold">1</div>
+                                <div>
+                                    <h3 class="font-bold text-gray-900 mb-1">Paste your link</h3>
+                                    <p class="text-sm text-gray-600">Copy a YouTube, Vimeo, SoundCloud, TikTok, or 1000+ other site URL.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="flex-none w-10 h-10 rounded-full brand-gradient text-white flex items-center justify-center font-bold">2</div>
+                                <div>
+                                    <h3 class="font-bold text-gray-900 mb-1">Pick Audio or Video</h3>
+                                    <p class="text-sm text-gray-600">Choose your quality tier. Defaults to the best available.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="flex-none w-10 h-10 rounded-full brand-gradient text-white flex items-center justify-center font-bold">3</div>
+                                <div>
+                                    <h3 class="font-bold text-gray-900 mb-1">Click Download</h3>
+                                    <p class="text-sm text-gray-600">Files save to your Downloads folder automatically.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                            <span class="iconify text-brand-500" data-icon="lucide:check-circle"></span>
+                            Supported Sites (a sample)
+                        </h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs px-3 py-1.5 rounded-full bg-brand-50 text-brand-700 font-medium">YouTube</span>
+                            <span class="text-xs px-3 py-1.5 rounded-full bg-brand-50 text-brand-700 font-medium">YouTube Music</span>
+                            <span class="text-xs px-3 py-1.5 rounded-full bg-brand-50 text-brand-700 font-medium">Vimeo</span>
+                            <span class="text-xs px-3 py-1.5 rounded-full bg-brand-50 text-brand-700 font-medium">Dailymotion</span>
+                            <span class="text-xs px-3 py-1.5 rounded-full bg-brand-50 text-brand-700 font-medium">SoundCloud</span>
+                            <span class="text-xs px-3 py-1.5 rounded-full bg-brand-50 text-brand-700 font-medium">TikTok</span>
+                            <span class="text-xs px-3 py-1.5 rounded-full bg-brand-50 text-brand-700 font-medium">Twitter/X</span>
+                            <span class="text-xs px-3 py-1.5 rounded-full bg-brand-50 text-brand-700 font-medium">Instagram</span>
+                            <span class="text-xs px-3 py-1.5 rounded-full bg-brand-50 text-brand-700 font-medium">Reddit</span>
+                            <span class="text-xs px-3 py-1.5 rounded-full bg-brand-50 text-brand-700 font-medium">+1000 more</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-4">
+                            Powered by yt-dlp. See the <a href="https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md" class="text-brand-600 underline">full list</a>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Download -->
+        <section id="download" class="max-w-6xl mx-auto px-6 mb-32">
+            <div class="bg-gradient-to-br from-brand-50 to-surfaceAlt border border-brand-100 rounded-3xl p-8 md:p-12">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-3">Download Now</h2>
+                    <p class="text-gray-600 max-w-lg mx-auto">Everything is bundled. No Python, no FFmpeg, no setup headaches.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                    <div class="bg-white border-2 border-brand-200 rounded-2xl p-6 hover:border-brand-400 hover:shadow-xl transition-all">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="iconify text-brand-600" data-icon="lucide:monitor" data-width="28"></span>
+                            <span class="text-xl font-bold text-gray-900">Windows</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-1">.exe &middot; ~250 MB &middot; v1.0.0</p>
+                        <p class="text-sm text-gray-600 mb-5">Windows 10 &amp; 11 (64-bit)</p>
+                        <a href="https://sourceforge.net/projects/smart-music-video-downloader/files/latest/download"
+                           class="block w-full text-center brand-gradient text-white font-bold py-3 rounded-lg hover:opacity-90 transition-opacity">
+                            Download for Windows
+                        </a>
+                    </div>
+
+                    <div class="bg-white border-2 border-brand-200 rounded-2xl p-6 hover:border-brand-400 hover:shadow-xl transition-all">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="iconify text-brand-600" data-icon="lucide:terminal" data-width="28"></span>
+                            <span class="text-xl font-bold text-gray-900">Linux</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-1">.deb &middot; ~200 MB &middot; v1.0.0</p>
+                        <p class="text-sm text-gray-600 mb-5">Ubuntu 22.04+, Debian 12+</p>
+                        <a href="https://sourceforge.net/projects/smart-music-video-downloader/files/latest/download"
+                           class="block w-full text-center bg-gray-800 text-white font-bold py-3 rounded-lg hover:bg-gray-900 transition-colors">
+                            Download for Linux
+                        </a>
+                    </div>
+                </div>
+
+                <div class="mt-6 max-w-3xl mx-auto bg-white/50 border border-dashed border-brand-200 rounded-2xl p-6 text-center">
+                    <div class="flex items-center justify-center gap-2 mb-2">
+                        <span class="iconify text-gray-400" data-icon="lucide:apple" data-width="20"></span>
+                        <span class="text-base font-bold text-gray-500">macOS</span>
+                    </div>
+                    <p class="text-sm text-gray-500">Coming soon &mdash; actively working on it.</p>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <a href="https://github.com/lakepee/smart-music-video-downloader" target="_blank" rel="noopener"
+                       class="inline-flex items-center gap-2 text-sm font-medium text-brand-700 hover:text-brand-800">
+                        <span class="iconify" data-icon="lucide:github" data-width="16"></span>
+                        View source on GitHub
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Other Tools -->
+        <section id="tools" class="max-w-6xl mx-auto px-6 mb-32">
+            <div class="mb-12 text-center">
+                <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 mb-4">More Tools by Peter Okerinola</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Other free, ad-free utilities I've built for Windows.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <a href="https://smartrulercapture.com" target="_blank" rel="noopener"
+                   class="group bg-white border border-brand-100 rounded-2xl p-6 hover:border-brand-300 hover:shadow-lg transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center mb-4 text-brand-500">
+                        <span class="iconify" data-icon="lucide:ruler" data-width="24"></span>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Smart Ruler Capture</h3>
+                    <p class="text-sm text-gray-600 mb-3">Screen capture software with a built-in ruler, grid overlay, and multi-area measurement.</p>
+                    <span class="text-xs text-brand-600 font-semibold inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+                        Visit site <span class="iconify" data-icon="lucide:arrow-right" data-width="14"></span>
+                    </span>
+                </a>
+
+                <div class="bg-white border-2 border-brand-300 rounded-2xl p-6 relative">
+                    <div class="absolute top-4 right-4 text-xs font-bold text-brand-600 bg-brand-50 px-2 py-1 rounded">You are here</div>
+                    <div class="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center mb-4 text-brand-500">
+                        <span class="iconify" data-icon="lucide:music" data-width="24"></span>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Smart Music &amp; Video Downloader</h3>
+                    <p class="text-sm text-gray-600 mb-3">Simple, ad-free downloads from YouTube and 1000+ sites. Paste a link, click Download.</p>
+                    <a href="#download" class="text-xs text-brand-600 font-semibold inline-flex items-center gap-1 hover:gap-2 transition-all">
+                        Download <span class="iconify" data-icon="lucide:arrow-right" data-width="14"></span>
+                    </a>
+                </div>
+
+                <a href="https://github.com/lakepee" target="_blank" rel="noopener"
+                   class="group bg-white border border-dashed border-brand-200 rounded-2xl p-6 hover:border-brand-400 transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center mb-4 text-brand-500">
+                        <span class="iconify" data-icon="lucide:plus" data-width="24"></span>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">More Coming</h3>
+                    <p class="text-sm text-gray-600 mb-3">Follow my GitHub to see new tools as they're released.</p>
+                    <span class="text-xs text-brand-600 font-semibold inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+                        View GitHub <span class="iconify" data-icon="lucide:arrow-right" data-width="14"></span>
+                    </span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Donate -->
+        <section id="donate" class="max-w-6xl mx-auto px-6 mb-20">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="p-8 rounded-2xl border border-brand-100 bg-white">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <span class="iconify text-brand-500" data-icon="lucide:lock" data-width="20"></span>
+                        Privacy First
+                    </h3>
+                    <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                        Smart Music and Video Downloader runs locally on your computer. No analytics, no cloud uploads, no background tracking. Your files stay on your machine.
+                    </p>
+                    <a href="legal/privacy-policy.html" class="text-sm text-brand-600 hover:text-brand-700 font-semibold">Read Privacy Policy →</a>
+                </div>
+
+                <div class="p-8 rounded-2xl brand-gradient text-white relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+                    <div class="relative">
+                        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                            <span class="iconify" data-icon="lucide:heart" data-width="20"></span>
+                            Support Development
+                        </h3>
+                        <p class="text-sm text-white/90 leading-relaxed mb-6">
+                            This tool is free and always will be. If it saves you time, consider buying me a coffee &mdash; it covers hosting and keeps the project ad-free.
+                        </p>
+                        <div class="flex flex-wrap gap-3">
+                            <a href="https://ko-fi.com/smartsoftapps" target="_blank" rel="noopener"
+                               class="inline-flex items-center gap-2 bg-white text-brand-700 font-bold px-5 py-2.5 rounded-lg hover:bg-gray-100 transition-colors">
+                                <span class="iconify" data-icon="lucide:coffee" data-width="16"></span>
+                                Ko-fi
+                            </a>
+                            <a href="https://github.com/sponsors/lakepee" target="_blank" rel="noopener"
+                               class="inline-flex items-center gap-2 bg-white/15 border border-white/30 text-white font-bold px-5 py-2.5 rounded-lg hover:bg-white/25 transition-colors">
+                                <span class="iconify" data-icon="lucide:github" data-width="16"></span>
+                                GitHub Sponsors
+                            </a>
+                            <a href="https://paypal.me/smartsoftapps" target="_blank" rel="noopener"
+                               class="inline-flex items-center gap-2 bg-white/15 border border-white/30 text-white font-bold px-5 py-2.5 rounded-lg hover:bg-white/25 transition-colors">
+                                <span class="iconify" data-icon="lucide:circle-dollar-sign" data-width="16"></span>
+                                PayPal
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-brand-100 bg-white py-12">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+                <div class="col-span-2 md:col-span-1">
+                    <a href="#home" class="flex items-center gap-2 mb-4">
+                        <img src="assets/icons/logo.svg" alt="Logo" class="w-6 h-6" />
+                        <span class="text-base font-bold text-gray-900">Smart Downloader</span>
+                    </a>
+                    <p class="text-xs text-gray-500 leading-relaxed">
+                        Simple, ad-free music &amp; video downloading.<br />
+                        Built with ❤️ by Peter Okerinola.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-4">Product</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#download" class="text-xs text-gray-500 hover:text-brand-600 transition-colors">Download</a></li>
+                        <li><a href="#features" class="text-xs text-gray-500 hover:text-brand-600 transition-colors">Features</a></li>
+                        <li><a href="#how-to" class="text-xs text-gray-500 hover:text-brand-600 transition-colors">Guide</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-4">Other Tools</h4>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="https://smartrulercapture.com" target="_blank" rel="noopener"
+                               class="text-xs text-gray-500 hover:text-brand-600 transition-colors">
+                                Smart Ruler Capture
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/lakepee" target="_blank" rel="noopener"
+                               class="text-xs text-gray-500 hover:text-brand-600 transition-colors">
+                                All Projects
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://ko-fi.com/smartsoftapps" target="_blank" rel="noopener"
+                               class="text-xs text-gray-500 hover:text-brand-600 transition-colors">
+                                Support Me
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-4">Support</h4>
+                    <ul class="space-y-2">
+                        <li><a href="https://github.com/lakepee/smart-music-video-downloader/issues" class="text-xs text-gray-500 hover:text-brand-600 transition-colors">Report Bug</a></li>
+                        <li><a href="https://github.com/lakepee/smart-music-video-downloader" class="text-xs text-gray-500 hover:text-brand-600 transition-colors">Source Code</a></li>
+                        <li><a href="legal/privacy-policy.html" class="text-xs text-gray-500 hover:text-brand-600 transition-colors">Privacy</a></li>
+                        <li><a href="legal/terms-of-use.html" class="text-xs text-gray-500 hover:text-brand-600 transition-colors">Terms</a></li>
+                        <li><a href="legal/license.html" class="text-xs text-gray-500 hover:text-brand-600 transition-colors">License</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-brand-100">
+                <p class="text-xs text-gray-400">© 2026 Smart Music and Video Downloader. Built by Peter Okerinola.</p>
+                <div class="flex gap-4 mt-4 md:mt-0">
+                    <a href="https://github.com/lakepee" target="_blank" rel="noopener" class="text-gray-400 hover:text-brand-600">
+                        <span class="iconify" data-icon="lucide:github" data-width="16"></span>
+                    </a>
+                    <a href="https://x.com/lakepee" target="_blank" rel="noopener" class="text-gray-400 hover:text-brand-600">
+                        <span class="iconify" data-icon="lucide:twitter" data-width="16"></span>
+                    </a>
+                    <a href="https://ko-fi.com/smartsoftapps" target="_blank" rel="noopener" class="text-gray-400 hover:text-brand-600">
+                        <span class="iconify" data-icon="lucide:coffee" data-width="16"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
